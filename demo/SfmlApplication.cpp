@@ -21,6 +21,10 @@ void SfmlApp::Run()
     LoadOGLExtensions();
     m_resources = CreateOGLResources();
 
+    // make sure to resize based on the _actual_ screen size
+    auto size = m_window->getSize();
+    m_resources->OnScreenResize( size.x, size.y );
+
     MainLoop();
   }
   catch ( std::exception& e )
@@ -97,6 +101,11 @@ void SfmlApp::HandleEvent( const sf::Event& event )
     {
       running = false;
     }
+    break;
+
+  case sf::Event::Resized:
+    m_resources->OnScreenResize( event.size.width,
+                                 event.size.height );
     break;
 
   default:

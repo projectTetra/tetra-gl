@@ -26,7 +26,8 @@ env['CPPPATH'] += [ './demo' ];
 
 demoBaseDir = './demo';
 demoNames = [o for o in os.listdir(demoBaseDir) 
-              if os.path.isdir(os.path.join(demoBaseDir, o))];
+              if o != "shaders" and
+                os.path.isdir(os.path.join(demoBaseDir, o))];
 
 for demoName in demoNames:
   demoDir = os.path.join( demoBaseDir, demoName );

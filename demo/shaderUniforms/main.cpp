@@ -1,8 +1,12 @@
 #include <tetra/gl/Buffer.hpp>
 #include <tetra/gl/GLException.hpp>
 #include <tetra/gl/shaderProgram/Builder.hpp>
-
 #include <SfmlApplication.hpp>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <iostream>
 
 using namespace std;
 using namespace tetra;
@@ -15,9 +19,9 @@ using namespace tetra::gl;
 class BasicVertex
 {
 public:
-  BasicVertex( float x, float y ) : position{{x, y}} {};
+  BasicVertex( float x, float y, float z ) : position{{x, y, z}} {}
 
-  array<float, 2> position;
+  array<float, 3> position;
 };
 
 /**
@@ -32,12 +36,18 @@ public:
   /**
    * Here we will create all of our OpenGL resources.
    **/
-  GLResources() : passthrough{CreatePassthroughProgram()}
+  GLResources() : projectionProgram{CreatePassthroughProgram()}
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
 
-    buffer.EnableVertexAttrib( 0, &BasicVertex::position ); 
-    buffer.SetData( {{-0.5f, -0.5f}, {0.0f, 0.5f}, {0.5f, -0.5f}} );
+    buffer.EnableVertexAttrib( 0, &BasicVertex::position );
+    buffer.SetData( {{-5.0f, -5.0f, -100.0f},
+                     {0.0f, 5.0f, -100.0f},
+                     {5.0f, -5.0f, -100.0f}} );
+
+    // Get the projection location
+    projectionLocation =
+      projectionProgram.FindUniform( "projection" );
   }
 
   /**
@@ -46,8 +56,29 @@ public:
   void Render() override
   {
     glClear( GL_COLOR_BUFFER_BIT );
-    passthrough.Use();
+    projectionProgram.Use();
+  
+    // Set the projection matrix before drawing the buffer
+    glUniformMatrix4fv( projectionLocation, 1, GL_FALSE,
+                        &projectionMatrix[0][0] );
+
     buffer.Draw( GL_TRIANGLES );
+  }
+
+  /**
+   * Called when the screen is resized, including at program start.
+   **/
+  void OnScreenResize( int width, int height ) override
+  {
+    // When The screen is resized, we need to resize the viewport
+    glViewport( 0, 0, width, height );
+    
+    // then rebuild the projection matrix
+    float aspect =
+      static_cast<float>( width ) / static_cast<float>( height );
+
+    projectionMatrix =
+      glm::perspective( 70.0f, aspect, 1.0f, 500.0f );
   }
 
 private:
@@ -58,7 +89,7 @@ private:
   shaderProgram::Program CreatePassthroughProgram()
   {
     return shaderProgram::Builder{}
-      .AddShaderFile( "./demo/shaders/passthrough.vert",
+      .AddShaderFile( "./demo/shaders/projection.vert",
                       shaderProgram::SHADER_TYPE::VERTEX )
       .AddShaderFile( "./demo/shaders/passthrough.frag",
                       shaderProgram::SHADER_TYPE::FRAGMENT )
@@ -78,7 +109,14 @@ private:
    * ShaderProgram, we will just use this to pass verticies and
    * fragments through the pipeline.
    **/
-  shaderProgram::Program passthrough;
+  shaderProgram::Program projectionProgram;
+
+  /**
+   * We need to hold the location of the projection uniform, and we
+   * need to hold the actual projection matrix.
+   **/
+  GLint projectionLocation{-1};
+  glm::mat4 projectionMatrix{1.0f};
 };
 
 /**

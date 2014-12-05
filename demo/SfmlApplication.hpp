@@ -14,6 +14,7 @@ public:
   IGLResources();
   virtual ~IGLResources();
   virtual void Render() = 0;
+  virtual void OnScreenResize( int, int ){};
 };
 
 /**
