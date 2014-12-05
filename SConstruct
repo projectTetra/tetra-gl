@@ -6,15 +6,19 @@ env['LIBS'] = [];
 env['CXX'] = 'clang++';
 env['CXXFLAGS'] = [ '-std=c++11', '-ggdb' ];
 
-buildLib = env.Library( './bin/tetraGl', Glob( 'src/*/*/*.cpp' ) );
+buildLib = env.Library( './bin/tetraGl',
+                        Glob( 'src/*/*/*.cpp' ) + 
+                        Glob( 'src/*/*/*/*.cpp' ) );
 
-env['LIBS'] += ['tetraGl'];
+env['LIBS'] += [
+  'GL',
+  'GLEW',
+  'tetraGl',
+  'sfml-graphics',
+  'sfml-window',
+  'sfml-system',
+];
 
-buildDemo = env.Program( './bin/demo.out' );
+env['CPPPATH'] += [ './demo' ];
+buildDemo = env.Program( './bin/demo.out', Glob( 'demo/*.cpp' ) );
 Depends( buildDemo, buildLib );
-
-runDemo = Command( target = "runDemo", source = "./bin/demo.out",
-                   action = ["./bin/demo.out"] );
-
-Depends( runDemo, buildDemo );
-Default( runDemo );

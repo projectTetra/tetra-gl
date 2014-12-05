@@ -42,9 +42,7 @@ flags = [
 '-x',
 'c++',
 '-I./inc',
-'-I./depends/tetra-meta/inc',
-'-I./depends/tetra-message/inc',
-'-I./tst'
+'-I./demo'
 ]
 
 
