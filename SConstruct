@@ -1,3 +1,6 @@
+import os;
+import os.path;
+
 env = Environment();
 env['CPPPATH'] = ['./inc'];
 env['LIBPATH'] = ['./bin'];
@@ -20,5 +23,16 @@ env['LIBS'] += [
 ];
 
 env['CPPPATH'] += [ './demo' ];
-buildDemo = env.Program( './bin/demo.out', Glob( 'demo/*.cpp' ) );
-Depends( buildDemo, buildLib );
+
+demoBaseDir = './demo';
+demoNames = [o for o in os.listdir(demoBaseDir) 
+              if os.path.isdir(os.path.join(demoBaseDir, o))];
+
+for demoName in demoNames:
+  demoDir = os.path.join( demoBaseDir, demoName );
+  buildDemo = env.Program( './bin/' + demoName + '.out',
+                           Glob( demoBaseDir + '/*.cpp') +
+                           Glob( demoDir + '/*.cpp' ) );
+  Depends( buildDemo, buildLib );
+  Default( buildDemo );
+

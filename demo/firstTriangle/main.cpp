@@ -1,7 +1,8 @@
 #include <tetra/gl/Buffer.hpp>
 #include <tetra/gl/GLException.hpp>
-#include <SfmlApplication.hpp>
 #include <tetra/gl/shaderProgram/Builder.hpp>
+
+#include <SfmlApplication.hpp>
 
 using namespace std;
 using namespace tetra;
@@ -31,8 +32,8 @@ public:
   void Render() override
   {
     glClear( GL_COLOR_BUFFER_BIT );
-    this->passthrough.Use();
-    this->buffer.Draw( GL_TRIANGLES );
+    passthrough.Use();
+    buffer.Draw( GL_TRIANGLES );
   }
 
 private:
