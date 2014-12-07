@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TETRA_CORE_GLEXCEPTION_HPP
-#define TETRA_CORE_GLEXCEPTION_HPP
+#ifndef TETRA_GL_GLEXCEPTION_HPP
+#define TETRA_GL_GLEXCEPTION_HPP
 
 #include <GL/glew.h>
 #include <tetra/gl/TetraDef.hpp>
@@ -31,29 +31,29 @@ public:
    * Returns the list of detail messages, good for testing if you are
    * expecting something to go wrong in a specific way.
    **/
-  const std::vector<std::string>& GetDetails() const NOEXCEPT;
+  const std::vector<std::string>& getDetails() const NOEXCEPT;
 
   /**
    * Returns the function which caused the error.
    **/
-  const std::string& GetGLFunction() const NOEXCEPT;
+  const std::string& getGLFunction() const NOEXCEPT;
 
   /**
    * Returns the string representing the OpenGL error code.
    **/
-  std::string GetGLErrorString() const NOEXCEPT;
+  std::string getGLErrorString() const NOEXCEPT;
 
   /**
    * Returns the actual GLenum error code that glGetError returned.
    **/
-  GLenum GetGLError() const NOEXCEPT;
+  GLenum getGLError() const NOEXCEPT;
 
 private:
-  std::string CreateErrMsg(
+  std::string createErrMsg(
     const std::string& glFunctionName, GLenum glError,
     const std::vector<std::string>& details ) const NOEXCEPT;
 
-  std::string FindGLErrorString( GLenum err ) const NOEXCEPT;
+  std::string findGLErrorString( GLenum err ) const NOEXCEPT;
 
 private:
   std::string glFunctionName;
@@ -63,7 +63,8 @@ private:
 
 /**
  * Calls glGetError, if there is an error this will throw a
- * GLException with the funcitonName and the detail messages specified.
+ * GLException with the funcitonName and the detail messages
+ *specified.
  **/
 void CheckGLError( const std::string& glFunctionName,
                    const std::vector<std::string>& details = {} );

@@ -15,38 +15,39 @@ void tetra::gl::CheckGLError( const string& glFunctionName,
 GLException::GLException( const string& glFunctionName,
                           GLenum glError,
                           const vector<string>& details ) NOEXCEPT
-  : logic_error{CreateErrMsg( glFunctionName, glError, details )},
+  : logic_error{createErrMsg( glFunctionName, glError, details )},
     glFunctionName{glFunctionName},
     details{details},
     error{glError}
-{ }
+{
+}
 
-const vector<string>& GLException::GetDetails() const NOEXCEPT
+const vector<string>& GLException::getDetails() const NOEXCEPT
 {
   return this->details;
 }
 
-const string& GLException::GetGLFunction() const NOEXCEPT
+const string& GLException::getGLFunction() const NOEXCEPT
 {
   return this->glFunctionName;
 }
 
-std::string GLException::GetGLErrorString() const NOEXCEPT
+std::string GLException::getGLErrorString() const NOEXCEPT
 {
-  return FindGLErrorString( this->error );
+  return findGLErrorString( this->error );
 }
 
-GLenum GLException::GetGLError() const NOEXCEPT
+GLenum GLException::getGLError() const NOEXCEPT
 {
   return this->error;
 }
 
-string GLException::CreateErrMsg(
+string GLException::createErrMsg(
   const string& glFunctionName, GLenum glError,
   const vector<string>& details ) const NOEXCEPT
 {
   auto errMsg =
-    glFunctionName + ": " + FindGLErrorString( glError ) + "\n";
+    glFunctionName + ": " + findGLErrorString( glError ) + "\n";
   for ( const auto& detail : details )
   {
     errMsg += detail + ", \n";
@@ -55,7 +56,7 @@ string GLException::CreateErrMsg(
   return errMsg;
 }
 
-string GLException::FindGLErrorString( GLenum err ) const NOEXCEPT
+string GLException::findGLErrorString( GLenum err ) const NOEXCEPT
 {
 #define Case( type )                                                 \
   case type:                                                         \

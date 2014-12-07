@@ -45,7 +45,7 @@ void Texture::swap( Texture& toSwap ) NOEXCEPT
   std::swap( this->type, toSwap.type );
 }
 
-void Texture::Bind() const
+void Texture::bind() const
 {
   glActiveTexture( static_cast<GLenum>( this->unit ) );
   CheckGLError( "glActiveTexture", {to_string( this->unit )} );
@@ -54,21 +54,21 @@ void Texture::Bind() const
   CheckGLError( "glBindTexture", {to_string( this->type )} );
 }
 
-GLuint Texture::Expose() const NOEXCEPT { return this->handle; }
+GLuint Texture::expose() const NOEXCEPT { return this->handle; }
 
-UNIT Texture::GetUnit() const NOEXCEPT { return this->unit; }
+UNIT Texture::getUnit() const NOEXCEPT { return this->unit; }
 
-TYPE Texture::GetType() const NOEXCEPT { return this->type; }
+TYPE Texture::getType() const NOEXCEPT { return this->type; }
 
-void Texture::SetUniform( GLint loc ) const
+void Texture::setUniform( GLint loc ) const
 {
-  this->Bind();
-  glUniform1i( loc, UnitToInt( this->GetUnit() ) );
+  this->bind();
+  glUniform1i( loc, UnitToInt( this->getUnit() ) );
 }
 
-ostream& Texture::DumpParams( ostream& out )
+ostream& Texture::dumpParams( ostream& out )
 {
-  this->Bind();
+  this->bind();
   DumpTextureParams( out, static_cast<GLenum>( this->type ) );
 
   return out;

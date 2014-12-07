@@ -28,7 +28,7 @@ public:
    * @param type The type of the shader.
    * @throws runtime_error If the file cannot be found.
    **/
-  Builder& AddShaderFile( const std::string& filePath,
+  Builder& addShaderFile( const std::string& filePath,
                           SHADER_TYPE type );
 
   /**
@@ -37,7 +37,7 @@ public:
    * @param source The shader's source code.
    * @param type The shader's type.
    **/
-  Builder& AddShaderSource( const std::string& source,
+  Builder& addShaderSource( const std::string& source,
                             SHADER_TYPE type ) NOEXCEPT;
 
   /**
@@ -45,7 +45,7 @@ public:
    * @param name The name of the vertex attribute to bind.
    * @param index The index to bind the vertex attribute to.
    **/
-  Builder& BindVertexAttrib( const std::string& name,
+  Builder& bindVertexAttrib( const std::string& name,
                              GLuint index ) NOEXCEPT;
 
   /**
@@ -54,25 +54,25 @@ public:
    * @param name The name of the fragment shader's output.
    * @param index The index of the color attachment to bind.
    **/
-  Builder& BindFragDataLocation( const std::string& name,
+  Builder& bindFragDataLocation( const std::string& name,
                                  GLuint attachmentIndex ) NOEXCEPT;
 
   /**
    * Enables transform-feedback for a vertex shader output variable.
    * @param name The name of the vertex shader's output variable.
    **/
-  Builder& EnableVertexFeedback( const std::string& name ) NOEXCEPT;
+  Builder& enableVertexFeedback( const std::string& name ) NOEXCEPT;
 
   /**
    * Sets the vertex feedback mode, defaults to GL_SEPARATE_ATTRIBS.
    **/
-  Builder& SetTransformFeedbackMode( TRANSFORM_MODE mode ) NOEXCEPT;
+  Builder& setTransformFeedbackMode( TRANSFORM_MODE mode ) NOEXCEPT;
 
   /**
    * Uses the data from the previous functions to build a shader
    * program.
    **/
-  Program Build();
+  Program build();
 
 private:
   std::vector<std::string> feedbackVaryings;

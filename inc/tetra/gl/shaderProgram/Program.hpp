@@ -51,7 +51,7 @@ public:
   /**
    * Exposes the OpenGL handle to the shader program.
    **/
-  GLuint Expose() const NOEXCEPT;
+  GLuint expose() const NOEXCEPT;
 
   /**
    * Finds the vertex attribute in this Program.
@@ -59,7 +59,7 @@ public:
    * @return The vertex attribute's location.
    * @throws GLExecption if the call causes an error.
    **/
-  GLint FindVertexAttrib( const std::string& name ) const;
+  GLint findVertexAttrib( const std::string& name ) const;
 
   /**
    * Finds the uniform location in this Program.
@@ -67,13 +67,13 @@ public:
    * @return The uniform's location.
    * @throws GLException if the call causes an error.
    **/
-  GLint FindUniform( const std::string& name ) const;
+  GLint findUniform( const std::string& name ) const;
 
   /**
    * Uses this program for rendering.
    * @throws GLException if the call causes an error.
    **/
-  void Use() const;
+  void use() const;
 
 private:
   GLuint handle;

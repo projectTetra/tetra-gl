@@ -1,5 +1,5 @@
 #pragma once
-#ifndef TETRA_GL_TEXTURE_ENUMS_HPP 
+#ifndef TETRA_GL_TEXTURE_ENUMS_HPP
 #define TETRA_GL_TEXTURE_ENUMS_HPP
 
 #include <GL/glew.h>

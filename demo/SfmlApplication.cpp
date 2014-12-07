@@ -13,27 +13,27 @@ IGLResources::~IGLResources(){};
 
 SfmlApp::SfmlApp() {}
 
-void SfmlApp::Run()
+void SfmlApp::run()
 {
   try
   {
-    m_window = ConstructWindow();
-    LoadOGLExtensions();
-    m_resources = CreateOGLResources();
+    m_window = constructWindow();
+    loadOGLExtensions();
+    m_resources = createOGLResources();
 
     // make sure to resize based on the _actual_ screen size
     auto size = m_window->getSize();
-    m_resources->OnScreenResize( size.x, size.y );
+    m_resources->onScreenResize( size.x, size.y );
 
-    MainLoop();
+    mainLoop();
   }
   catch ( std::exception& e )
   {
-    HandleTopLevelException( e );
+    handleTopLevelException( e );
   }
 }
 
-std::unique_ptr<sf::RenderWindow> SfmlApp::ConstructWindow()
+std::unique_ptr<sf::RenderWindow> SfmlApp::constructWindow()
 {
   auto settings = sf::ContextSettings{};
   settings.antialiasingLevel = 2;
@@ -44,12 +44,12 @@ std::unique_ptr<sf::RenderWindow> SfmlApp::ConstructWindow()
 
   auto vm = sf::VideoMode{800, 600};
   return std::unique_ptr<sf::RenderWindow>{new sf::RenderWindow{
-    vm, WindowName(), sf::Style::Default, settings}};
+    vm, windowName(), sf::Style::Default, settings}};
 }
 
-std::string SfmlApp::WindowName() { return "sfml window"; }
+std::string SfmlApp::windowName() { return "sfml window"; }
 
-void SfmlApp::LoadOGLExtensions()
+void SfmlApp::loadOGLExtensions()
 {
   glewExperimental = true;
   auto Status = glewInit();
@@ -63,13 +63,13 @@ void SfmlApp::LoadOGLExtensions()
   }
 }
 
-void SfmlApp::HandleTopLevelException( const std::exception& e )
+void SfmlApp::handleTopLevelException( const std::exception& e )
 {
   std::cerr << "Fatal Error: " << e.what() << std::endl;
   std::terminate();
 }
 
-void SfmlApp::MainLoop()
+void SfmlApp::mainLoop()
 {
   while ( running )
   {
@@ -77,17 +77,17 @@ void SfmlApp::MainLoop()
     // process events
     while ( m_window->pollEvent( event ) )
     {
-      HandleEvent( event );
+      handleEvent( event );
     }
 
-    m_resources->Render();
+    m_resources->render();
 
     // then swap buffers
     m_window->display();
   }
 }
 
-void SfmlApp::HandleEvent( const sf::Event& event )
+void SfmlApp::handleEvent( const sf::Event& event )
 {
   // if the user presses the x button, then quit
   switch ( event.type )
@@ -104,7 +104,7 @@ void SfmlApp::HandleEvent( const sf::Event& event )
     break;
 
   case sf::Event::Resized:
-    m_resources->OnScreenResize( event.size.width,
+    m_resources->onScreenResize( event.size.width,
                                  event.size.height );
     break;
 

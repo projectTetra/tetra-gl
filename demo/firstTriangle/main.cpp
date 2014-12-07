@@ -36,18 +36,18 @@ public:
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
 
-    buffer.EnableVertexAttrib( 0, &BasicVertex::position ); 
-    buffer.SetData( {{-0.5f, -0.5f}, {0.0f, 0.5f}, {0.5f, -0.5f}} );
+    buffer.enableVertexAttrib( 0, &BasicVertex::position );
+    buffer.setData( {{-0.5f, -0.5f}, {0.0f, 0.5f}, {0.5f, -0.5f}} );
   }
 
   /**
    * Render the scene.
    **/
-  void Render() override
+  void render() override
   {
     glClear( GL_COLOR_BUFFER_BIT );
-    passthrough.Use();
-    buffer.Draw( GL_TRIANGLES );
+    passthrough.use();
+    buffer.draw( GL_TRIANGLES );
   }
 
 private:
@@ -58,12 +58,14 @@ private:
   shaderProgram::Program CreatePassthroughProgram()
   {
     return shaderProgram::Builder{}
-      .AddShaderFile( "./demo/shaders/passthrough.vert",
+      .addShaderFile( "./demo/shaders/passthrough.vert",
                       shaderProgram::SHADER_TYPE::VERTEX )
-      .AddShaderFile( "./demo/shaders/passthrough.frag",
+
+      .addShaderFile( "./demo/shaders/passthrough.frag",
                       shaderProgram::SHADER_TYPE::FRAGMENT )
-      .BindVertexAttrib( "vVertex", 0 )
-      .Build();
+
+      .bindVertexAttrib( "vVertex", 0 )
+      .build();
   }
 
 private:
@@ -91,7 +93,7 @@ public:
    * Create our instance of the GLResources class to be managed by the
    * SfmlApp object.
    **/
-  unique_ptr<IGLResources> CreateOGLResources() override
+  unique_ptr<IGLResources> createOGLResources() override
   {
     glGetError(); // make sure that the error flag is clear
     return unique_ptr<IGLResources>{new GLResources{}};
@@ -104,7 +106,7 @@ public:
 int main()
 {
   App myApp{};
-  myApp.Run(); // run the app!
+  myApp.run(); // run the app!
 
   return 0;
 }

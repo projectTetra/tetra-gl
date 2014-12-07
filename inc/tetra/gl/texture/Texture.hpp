@@ -48,37 +48,38 @@ public:
    * Lowercase method name for standard-library conformance.
    **/
   void swap( Texture& toSwap ) NOEXCEPT;
+
   /**
    * Binds the texture to its texture unit.
    **/
-  void Bind() const;
+  void bind() const;
 
   /**
    * Returns the handle to the OpenGL texture.
    **/
-  GLuint Expose() const NOEXCEPT;
+  GLuint expose() const NOEXCEPT;
 
   /**
    * Returns the texture unit that the texture will bind to.
    **/
-  UNIT GetUnit() const NOEXCEPT;
+  UNIT getUnit() const NOEXCEPT;
 
   /**
    * Returns the texture's type.
    **/
-  TYPE GetType() const NOEXCEPT;
+  TYPE getType() const NOEXCEPT;
 
   /**
    * Binds the texture and sets the proper uniform value.
    * @param loc The uniform location of the sampler in the
    *            current shader program.
    **/
-  void SetUniform( GLint loc ) const;
+  void setUniform( GLint loc ) const;
 
   /**
    * Queries OpenGL for all of the texture parameters.
    **/
-  std::ostream& DumpParams( std::ostream& out );
+  std::ostream& dumpParams( std::ostream& out );
 
 private:
   GLuint handle;

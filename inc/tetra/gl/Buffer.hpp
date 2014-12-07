@@ -54,7 +54,7 @@ public:
    *        how the buffer will be used.
    * @throws GLException if there are any gl errors
    **/
-  void SetData( const std::vector<VertexType>& data,
+  void setData( const std::vector<VertexType>& data,
                 GLenum BufferUsage = GL_STATIC_DRAW );
 
   /**
@@ -67,7 +67,7 @@ public:
    *        how the buffer will be used.
    * @throws GLException if there are any gl errors
    **/
-  void SetElementData( const std::vector<unsigned short>& data,
+  void setElementData( const std::vector<unsigned short>& data,
                        GLenum BufferUsage = GL_STATIC_DRAW );
 
   /**
@@ -80,7 +80,7 @@ public:
    **/
   template <std::array<float, 1>::size_type length>
   Buffer<VertexType>&
-  EnableVertexAttrib( GLuint Index,
+  enableVertexAttrib( GLuint Index,
                       std::array<float, length> VertexType::*Attrib );
 
   /**
@@ -89,24 +89,24 @@ public:
    * otherwise it will call glDrawArrays.
    * @throws GLException if there are any OpenGL errors
    **/
-  void Draw( GLenum Topology = GL_TRIANGLES ) const;
+  void draw( GLenum Topology = GL_TRIANGLES ) const;
 
   /**
   * Returns the handle to the buffer.
   * Note: do not delete the buffer handle!
   **/
-  GLuint Expose() const NOEXCEPT;
+  GLuint expose() const NOEXCEPT;
 
   /**
    * Binds the VertexArrayObject.
    **/
-  void Bind() const NOEXCEPT;
+  void bind() const NOEXCEPT;
 
   /**
    * Returns the number of verticies in this buffer. (the
    * size of the vector in the last SetData call)
    **/
-  unsigned int Size() const NOEXCEPT;
+  unsigned int size() const NOEXCEPT;
 
 private:
   Buffer( Buffer& ) = delete;

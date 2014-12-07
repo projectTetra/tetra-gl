@@ -39,13 +39,13 @@ public:
   /**
    * Calls GLBindVertexArray to bind the vertex array.
    **/
-  void Bind() const NOEXCEPT;
+  void bind() const NOEXCEPT;
 
   /**
    * Exposes the OpenGL handle to the vertex array.
    * Does not relinquish ownership of the handle.
    **/
-  GLuint Expose() const NOEXCEPT;
+  GLuint expose() const NOEXCEPT;
 
 private:
   GLuint handle;

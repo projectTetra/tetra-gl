@@ -45,32 +45,32 @@ public:
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
 
-    buffer.EnableVertexAttrib( 0, &BasicVertex::position );
-    buffer.EnableVertexAttrib( 1, &BasicVertex::texCoords );
-    buffer.SetData( {{-5.0f, -5.0f, -75.0f, 0.0f, 0.0f},
+    buffer.enableVertexAttrib( 0, &BasicVertex::position );
+    buffer.enableVertexAttrib( 1, &BasicVertex::texCoords );
+    buffer.setData( {{-5.0f, -5.0f, -75.0f, 0.0f, 0.0f},
                      {5.0f, -5.0f, -75.0f, 1.0f, 0.0f},
                      {-5.0f, 5.0f, -75.0f, 0.0f, 1.0f},
                      {5.0f, 5.0f, -75.0f, 1.0f, 1.0f}} );
 
     // Get the projection location
     projectionLocation =
-      projectionProgram.FindUniform( "projection" );
+      projectionProgram.findUniform( "projection" );
 
-    textureLocation = projectionProgram.FindUniform( "tex" );
+    textureLocation = projectionProgram.findUniform( "tex" );
 
     SOIL_load_OGL_texture( "./demo/assets/basicTexture.png",
-                           SOIL_LOAD_AUTO, texture.Expose(), 0 );
+                           SOIL_LOAD_AUTO, texture.expose(), 0 );
 
-    texture.Bind();
-    glTexParameteri( static_cast<GLenum>( texture.GetType() ),
+    texture.bind();
+    glTexParameteri( static_cast<GLenum>( texture.getType() ),
                      GL_TEXTURE_WRAP_S,
                      static_cast<GLint>( texture::WRAP::REPEAT ) );
 
-    glTexParameteri( static_cast<GLenum>( texture.GetType() ),
+    glTexParameteri( static_cast<GLenum>( texture.getType() ),
                      GL_TEXTURE_WRAP_T,
                      static_cast<GLint>( texture::WRAP::REPEAT ) );
 
-    glTexParameteri( static_cast<GLenum>( texture.GetType() ),
+    glTexParameteri( static_cast<GLenum>( texture.getType() ),
                      GL_TEXTURE_WRAP_R,
                      static_cast<GLint>( texture::WRAP::REPEAT ) );
 
@@ -83,28 +83,28 @@ public:
   /**
    * Render the scene.
    **/
-  void Render() override
+  void render() override
   {
     glClear( GL_COLOR_BUFFER_BIT );
-    projectionProgram.Use();
-     
+    projectionProgram.use();
+
     // Set the projection matrix before drawing the buffer
     glUniformMatrix4fv( projectionLocation, 1, GL_FALSE,
                         &projectionMatrix[0][0] );
 
-    texture.SetUniform( textureLocation );
+    texture.setUniform( textureLocation );
 
-    buffer.Draw( GL_TRIANGLE_STRIP );
+    buffer.draw( GL_TRIANGLE_STRIP );
   }
 
   /**
    * Called when the screen is resized, including at program start.
    **/
-  void OnScreenResize( int width, int height ) override
+  void onScreenResize( int width, int height ) override
   {
     // When The screen is resized, we need to resize the viewport
     glViewport( 0, 0, width, height );
-    
+
     // then rebuild the projection matrix
     float aspect =
       static_cast<float>( width ) / static_cast<float>( height );
@@ -121,13 +121,15 @@ private:
   shaderProgram::Program CreatePassthroughProgram()
   {
     return shaderProgram::Builder{}
-      .AddShaderFile( "./demo/shaders/projection.vert",
+      .addShaderFile( "./demo/shaders/projection.vert",
                       shaderProgram::SHADER_TYPE::VERTEX )
-      .AddShaderFile( "./demo/shaders/texture.frag",
+
+      .addShaderFile( "./demo/shaders/texture.frag",
                       shaderProgram::SHADER_TYPE::FRAGMENT )
-      .BindVertexAttrib( "vVertex", 0 )
-      .BindVertexAttrib( "vTexCoords", 1 )
-      .Build();
+
+      .bindVertexAttrib( "vVertex", 0 )
+      .bindVertexAttrib( "vTexCoords", 1 )
+      .build();
   }
 
 private:
@@ -165,7 +167,7 @@ public:
    * Create our instance of the GLResources class to be managed by the
    * SfmlApp object.
    **/
-  unique_ptr<IGLResources> CreateOGLResources() override
+  unique_ptr<IGLResources> createOGLResources() override
   {
     glGetError(); // make sure that the error flag is clear
     return unique_ptr<IGLResources>{new GLResources{}};
@@ -178,7 +180,7 @@ public:
 int main()
 {
   App myApp{};
-  myApp.Run(); // run the app!
+  myApp.run(); // run the app!
 
   return 0;
 }

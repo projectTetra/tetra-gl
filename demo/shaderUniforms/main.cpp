@@ -40,39 +40,39 @@ public:
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
 
-    buffer.EnableVertexAttrib( 0, &BasicVertex::position );
-    buffer.SetData( {{-5.0f, -5.0f, -100.0f},
+    buffer.enableVertexAttrib( 0, &BasicVertex::position );
+    buffer.setData( {{-5.0f, -5.0f, -100.0f},
                      {0.0f, 5.0f, -100.0f},
                      {5.0f, -5.0f, -100.0f}} );
 
     // Get the projection location
     projectionLocation =
-      projectionProgram.FindUniform( "projection" );
+      projectionProgram.findUniform( "projection" );
   }
 
   /**
    * Render the scene.
    **/
-  void Render() override
+  void render() override
   {
     glClear( GL_COLOR_BUFFER_BIT );
-    projectionProgram.Use();
-  
+    projectionProgram.use();
+
     // Set the projection matrix before drawing the buffer
     glUniformMatrix4fv( projectionLocation, 1, GL_FALSE,
                         &projectionMatrix[0][0] );
 
-    buffer.Draw( GL_TRIANGLES );
+    buffer.draw( GL_TRIANGLES );
   }
 
   /**
    * Called when the screen is resized, including at program start.
    **/
-  void OnScreenResize( int width, int height ) override
+  void onScreenResize( int width, int height ) override
   {
     // When The screen is resized, we need to resize the viewport
     glViewport( 0, 0, width, height );
-    
+
     // then rebuild the projection matrix
     float aspect =
       static_cast<float>( width ) / static_cast<float>( height );
@@ -89,12 +89,14 @@ private:
   shaderProgram::Program CreatePassthroughProgram()
   {
     return shaderProgram::Builder{}
-      .AddShaderFile( "./demo/shaders/projection.vert",
+      .addShaderFile( "./demo/shaders/projection.vert",
                       shaderProgram::SHADER_TYPE::VERTEX )
-      .AddShaderFile( "./demo/shaders/passthrough.frag",
+
+      .addShaderFile( "./demo/shaders/passthrough.frag",
                       shaderProgram::SHADER_TYPE::FRAGMENT )
-      .BindVertexAttrib( "vVertex", 0 )
-      .Build();
+
+      .bindVertexAttrib( "vVertex", 0 )
+      .build();
   }
 
 private:
@@ -129,7 +131,7 @@ public:
    * Create our instance of the GLResources class to be managed by the
    * SfmlApp object.
    **/
-  unique_ptr<IGLResources> CreateOGLResources() override
+  unique_ptr<IGLResources> createOGLResources() override
   {
     glGetError(); // make sure that the error flag is clear
     return unique_ptr<IGLResources>{new GLResources{}};
@@ -142,7 +144,7 @@ public:
 int main()
 {
   App myApp{};
-  myApp.Run(); // run the app!
+  myApp.run(); // run the app!
 
   return 0;
 }

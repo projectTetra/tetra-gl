@@ -31,26 +31,26 @@ Program& Program::operator=( Program&& move )
   return *this;
 }
 
-GLuint Program::Expose() const NOEXCEPT { return this->handle; }
+GLuint Program::expose() const NOEXCEPT { return this->handle; }
 
-GLint Program::FindUniform( const string& name ) const
+GLint Program::findUniform( const string& name ) const
 {
-  auto location = glGetUniformLocation( Expose(), name.c_str() );
+  auto location = glGetUniformLocation( expose(), name.c_str() );
   CheckGLError( "glGetUniformLocation", {name} );
 
   return location;
 }
 
-GLint Program::FindVertexAttrib( const string& name ) const
+GLint Program::findVertexAttrib( const string& name ) const
 {
-  auto location = glGetAttribLocation( Expose(), name.c_str() );
+  auto location = glGetAttribLocation( expose(), name.c_str() );
   CheckGLError( "glGetAttribLocation", {name} );
   return location;
 }
 
-void Program::Use() const
+void Program::use() const
 {
-  glUseProgram( Expose() );
+  glUseProgram( expose() );
   CheckGLError( "glUseProgram" );
 }
 

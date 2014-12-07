@@ -31,38 +31,38 @@ string LoadTextFile( const string& fileName, SHADER_TYPE type )
 }
 }
 
-Builder& Builder::AddShaderFile( const string& filePath,
+Builder& Builder::addShaderFile( const string& filePath,
                                  SHADER_TYPE type )
 {
-  return AddShaderSource( LoadTextFile( filePath, type ), type );
+  return addShaderSource( LoadTextFile( filePath, type ), type );
 }
 
-Builder& Builder::AddShaderSource( const string& src,
+Builder& Builder::addShaderSource( const string& src,
                                    SHADER_TYPE type ) NOEXCEPT
 {
   auto shader = Shader{src, type};
-  shader.Compile();
+  shader.compile();
 
-  glAttachShader( this->program.Expose(), shader.Expose() );
-  CheckGLError( "glAttachShader", {to_string( shader.GetType() )} );
+  glAttachShader( this->program.expose(), shader.expose() );
+  CheckGLError( "glAttachShader", {to_string( shader.getType() )} );
 
   return *this;
 }
 
-Builder& Builder::BindVertexAttrib( const string& name,
+Builder& Builder::bindVertexAttrib( const string& name,
                                     GLuint index ) NOEXCEPT
 {
-  glBindAttribLocation( program.Expose(), index, name.c_str() );
+  glBindAttribLocation( program.expose(), index, name.c_str() );
   CheckGLError( "glBindAttribLocation", {name, to_string( index )} );
 
   return *this;
 }
 
 Builder&
-Builder::BindFragDataLocation( const string& name,
+Builder::bindFragDataLocation( const string& name,
                                GLuint attachmentIndex ) NOEXCEPT
 {
-  glBindFragDataLocation( this->program.Expose(), attachmentIndex,
+  glBindFragDataLocation( this->program.expose(), attachmentIndex,
                           name.c_str() );
   CheckGLError( "glBindFragDataLocation",
                 {name, to_string( attachmentIndex )} );
@@ -70,20 +70,20 @@ Builder::BindFragDataLocation( const string& name,
   return *this;
 }
 
-Builder& Builder::EnableVertexFeedback( const string& name ) NOEXCEPT
+Builder& Builder::enableVertexFeedback( const string& name ) NOEXCEPT
 {
   this->feedbackVaryings.emplace_back( name );
   return *this;
 }
 
 Builder&
-Builder::SetTransformFeedbackMode( TRANSFORM_MODE mode ) NOEXCEPT
+Builder::setTransformFeedbackMode( TRANSFORM_MODE mode ) NOEXCEPT
 {
   this->feedbackBufferMode = static_cast<GLenum>( mode );
   return *this;
 }
 
-Program Builder::Build()
+Program Builder::build()
 {
   // Set feedback varyings if specified
   unsigned numVaryings = this->feedbackVaryings.size();
@@ -96,26 +96,27 @@ Program Builder::Build()
     }
 
     glTransformFeedbackVaryings(
-      this->program.Expose(), static_cast<GLsizei>( varArray.size() ),
+      this->program.expose(), static_cast<GLsizei>( varArray.size() ),
       varArray.data(), this->feedbackBufferMode );
+
     CheckGLError( "glTransformFeedbackVaryings",
                   this->feedbackVaryings );
   }
 
   // Link the program
-  glLinkProgram( this->program.Expose() );
+  glLinkProgram( this->program.expose() );
   CheckGLError( "glLinkProgram" );
 
   // check the status of the link
   GLint testVal{GL_TRUE};
-  glGetProgramiv( this->program.Expose(), GL_LINK_STATUS, &testVal );
+  glGetProgramiv( this->program.expose(), GL_LINK_STATUS, &testVal );
 
   if ( testVal == GL_FALSE )
   {
     // the link failed, get the reason and throw
     const int logSize = 1024;
     char infoLog[logSize];
-    glGetProgramInfoLog( this->program.Expose(), logSize, nullptr,
+    glGetProgramInfoLog( this->program.expose(), logSize, nullptr,
                          infoLog );
 
     throw ShaderCompileException{"Shader Program failed to link: " +

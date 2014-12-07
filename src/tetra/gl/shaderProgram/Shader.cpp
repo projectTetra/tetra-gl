@@ -8,9 +8,9 @@ using namespace tetra::gl::shaderProgram;
 
 ShaderCompileException::ShaderCompileException( const string& msg,
                                                 SHADER_TYPE type )
-  : runtime_error( CreateErrorMessage( "", type, msg ) )
+  : runtime_error( createErrorMessage( "", type, msg ) )
   , errorMessage{msg}
-  , completeMessage( CreateErrorMessage( "", type, msg ) )
+  , completeMessage( createErrorMessage( "", type, msg ) )
   , type{type}
 { }
 
@@ -20,19 +20,19 @@ const char* ShaderCompileException::what() const NOEXCEPT
 }
 
 void
-ShaderCompileException::SetShaderName( const string& name ) NOEXCEPT
+ShaderCompileException::setShaderName( const string& name ) NOEXCEPT
 {
   this->shaderName = name;
   this->completeMessage =
-    CreateErrorMessage( name, this->type, this->errorMessage );
+    createErrorMessage( name, this->type, this->errorMessage );
 }
 
-const string& ShaderCompileException::GetShaderName() const NOEXCEPT
+const string& ShaderCompileException::getShaderName() const NOEXCEPT
 {
   return this->shaderName;
 }
 
-string ShaderCompileException::CreateErrorMessage(
+string ShaderCompileException::createErrorMessage(
   const string& shaderName, SHADER_TYPE type,
   const string& error ) NOEXCEPT
 {
@@ -76,7 +76,7 @@ Shader& Shader::operator=( Shader&& move )
   return *this;
 }
 
-void Shader::Compile() const
+void Shader::compile() const
 {
   GLint testVal = GL_FALSE;
 
@@ -96,7 +96,7 @@ void Shader::Compile() const
   }
 }
 
-SHADER_TYPE Shader::GetType() const NOEXCEPT { return this->type; }
+SHADER_TYPE Shader::getType() const NOEXCEPT { return this->type; }
 
-GLuint Shader::Expose() const NOEXCEPT { return this->handle; }
+GLuint Shader::expose() const NOEXCEPT { return this->handle; }
 

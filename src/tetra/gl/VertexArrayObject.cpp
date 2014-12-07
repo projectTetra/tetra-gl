@@ -35,13 +35,13 @@ operator=( VertexArrayObject&& Move ) throw()
   return *this;
 }
 
-void VertexArrayObject::Bind() const NOEXCEPT
+void VertexArrayObject::bind() const NOEXCEPT
 {
   glBindVertexArray( this->handle );
   CheckGLError( "glBindVertexArray" );
 }
 
-GLuint VertexArrayObject::Expose() const NOEXCEPT
+GLuint VertexArrayObject::expose() const NOEXCEPT
 {
   return this->handle;
 }

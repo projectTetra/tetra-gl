@@ -48,18 +48,18 @@ public:
    * Compiles the shader object, throws a ShaderCompileException if
    * the shader fails to compile.
    **/
-  void Compile() const;
+  void compile() const;
 
   /**
    * @return This shader's type.
    **/
-  SHADER_TYPE GetType() const NOEXCEPT;
+  SHADER_TYPE getType() const NOEXCEPT;
 
   /**
    * Exposes the handle to be manipulated externally, but the Shader
    * still "owns" the OpenGL shader.
    **/
-  GLuint Expose() const NOEXCEPT;
+  GLuint expose() const NOEXCEPT;
 
 private:
   GLuint handle; //!< OpenGL handle to the shader
@@ -76,12 +76,12 @@ public:
 
   const char* what() const NOEXCEPT override;
 
-  void SetShaderName( const std::string& name ) NOEXCEPT;
+  void setShaderName( const std::string& name ) NOEXCEPT;
 
-  const std::string& GetShaderName() const NOEXCEPT;
+  const std::string& getShaderName() const NOEXCEPT;
 
 private:
-  std::string CreateErrorMessage( const std::string& shaderName,
+  std::string createErrorMessage( const std::string& shaderName,
                                   SHADER_TYPE type,
                                   const std::string& error ) NOEXCEPT;
 

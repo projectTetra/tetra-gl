@@ -13,8 +13,9 @@ class IGLResources
 public:
   IGLResources();
   virtual ~IGLResources();
-  virtual void Render() = 0;
-  virtual void OnScreenResize( int, int ){};
+
+  virtual void render() = 0;
+  virtual void onScreenResize( int, int ){};
 };
 
 /**
@@ -37,36 +38,36 @@ public:
    * 4) Runs the MainLoop
    * 5) Any exceptions are handed to HandleTopLevelException
    **/
-  void Run();
+  void run();
 
 protected:
   /**
    * Construct the sfml render window.
    * Defaults to a 800x600 window which supports OpenGL 3.1.
    **/
-  virtual std::unique_ptr<sf::RenderWindow> ConstructWindow();
+  virtual std::unique_ptr<sf::RenderWindow> constructWindow();
 
   /**
    * Returns the window name, defaults to "sfml window".
    **/
-  virtual std::string WindowName();
+  virtual std::string windowName();
 
   /**
    * Loads all OpenGL functions. Defaults to using GLEW.
    **/
-  virtual void LoadOGLExtensions();
+  virtual void loadOGLExtensions();
 
   /**
    * Create the IGLResources object.
    **/
-  virtual std::unique_ptr<IGLResources> CreateOGLResources() = 0;
+  virtual std::unique_ptr<IGLResources> createOGLResources() = 0;
 
   /**
    * Handles all exceptions thrown out of the MainLoop or
    * the construction process. Defaults to pumping the output
    * to std::cerr and throwing a std::terminate.
    **/
-  virtual void HandleTopLevelException( const std::exception& e );
+  virtual void handleTopLevelException( const std::exception& e );
 
   /**
    * Main program loop. Runs a quickly as possible. Pulls
@@ -75,13 +76,13 @@ protected:
    * IGLResource's Render method and swaps the window
    * buffers.
    **/
-  virtual void MainLoop();
+  virtual void mainLoop();
 
   /**
    * Handles SFML events. Defaults to killing the program if
    * Escape is pressed or if the window is closed.
    **/
-  virtual void HandleEvent( const sf::Event& event );
+  virtual void handleEvent( const sf::Event& event );
 
 protected:
   std::unique_ptr<sf::RenderWindow> m_window;
