@@ -10,23 +10,23 @@ env['CXX'] = 'clang++';
 env['CXXFLAGS'] = [ '-std=c++11', '-ggdb' ];
 
 buildLib = env.Library( './bin/tetraGl',
-                        Glob( 'src/*/*/*.cpp' ) + 
+                        Glob( 'src/*/*/*.cpp' ) +
                         Glob( 'src/*/*/*/*.cpp' ) );
 
-env['LIBS'] += [
+env['LIBS'] = [
   'GL',
   'GLEW',
   'tetraGl',
   'sfml-graphics',
   'sfml-window',
   'sfml-system',
-];
+] + env['LIBS'];
 
 env['CPPPATH'] += [ './demo' ];
 
 demoBaseDir = './demo';
-demoNames = [o for o in os.listdir(demoBaseDir) 
-              if o != "shaders" and o != "assets" and 
+demoNames = [o for o in os.listdir(demoBaseDir)
+              if o != "shaders" and o != "assets" and
                 os.path.isdir(os.path.join(demoBaseDir, o))];
 
 for demoName in demoNames:

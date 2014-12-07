@@ -1,7 +1,7 @@
 #include <tetra/gl/Buffer.hpp>
 #include <tetra/gl/GLException.hpp>
 #include <tetra/gl/shaderProgram/Builder.hpp>
-#include <tetra/gl/texture/Texture.hpp>
+#include <tetra/gl/texture/Configurer.hpp>
 #include <SOIL.h>
 #include <SfmlApplication.hpp>
 
@@ -58,21 +58,11 @@ public:
 
     textureLocation = projectionProgram.findUniform( "tex" );
 
-    SOIL_load_OGL_texture( "./demo/assets/basicTexture.png",
-                           SOIL_LOAD_AUTO, texture.expose(), 0 );
-
-    texture.bind();
-    glTexParameteri( static_cast<GLenum>( texture.getType() ),
-                     GL_TEXTURE_WRAP_S,
-                     static_cast<GLint>( texture::WRAP::REPEAT ) );
-
-    glTexParameteri( static_cast<GLenum>( texture.getType() ),
-                     GL_TEXTURE_WRAP_T,
-                     static_cast<GLint>( texture::WRAP::REPEAT ) );
-
-    glTexParameteri( static_cast<GLenum>( texture.getType() ),
-                     GL_TEXTURE_WRAP_R,
-                     static_cast<GLint>( texture::WRAP::REPEAT ) );
+    texture::Configurer{basicImage}
+      .loadImage( "./demo/assets/basicTexture.png" )
+      .setWrapS( texture::WRAP::REPEAT )
+      .setWrapT( texture::WRAP::REPEAT )
+      .setWrapR( texture::WRAP::REPEAT );
 
     CheckGLError( "GLResources Constructor",
                   {"setting texture parameters"} );
@@ -92,7 +82,7 @@ public:
     glUniformMatrix4fv( projectionLocation, 1, GL_FALSE,
                         &projectionMatrix[0][0] );
 
-    texture.setUniform( textureLocation );
+    basicImage.setUniform( textureLocation );
 
     buffer.draw( GL_TRIANGLE_STRIP );
   }
@@ -154,7 +144,7 @@ private:
   glm::mat4 projectionMatrix{1.0f};
 
   GLint textureLocation{-1};
-  texture::Texture texture;
+  texture::Texture basicImage;
 };
 
 /**
