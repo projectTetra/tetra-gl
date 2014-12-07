@@ -1,0 +1,3 @@
+[submodule "depends/tetra-soil"]
+	path = depends/tetra-soil
+	url = git@github.com:projectTetra/tetra-soil.git

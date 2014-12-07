@@ -2,10 +2,10 @@ import os;
 import os.path;
 
 env = Environment();
-env['CPPPATH'] = ['./inc'];
-env['LIBPATH'] = ['./bin'];
+env['CPPPATH'] = ['./inc', './depends/tetra-soil/src'];
+env['LIBPATH'] = ['./bin', './depends/tetra-soil/bin'];
 
-env['LIBS'] = [];
+env['LIBS'] = [ 'tetraSoil' ];
 env['CXX'] = 'clang++';
 env['CXXFLAGS'] = [ '-std=c++11', '-ggdb' ];
 
@@ -26,7 +26,7 @@ env['CPPPATH'] += [ './demo' ];
 
 demoBaseDir = './demo';
 demoNames = [o for o in os.listdir(demoBaseDir) 
-              if o != "shaders" and
+              if o != "shaders" and o != "assets" and 
                 os.path.isdir(os.path.join(demoBaseDir, o))];
 
 for demoName in demoNames:

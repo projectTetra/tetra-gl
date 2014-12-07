@@ -74,7 +74,8 @@ ostream& Texture::DumpParams( ostream& out )
   return out;
 }
 
-ostream& DumpTextureParams( ostream& out, GLenum target )
+ostream& tetra::gl::texture::DumpTextureParams( ostream& out,
+                                                GLenum target )
 {
   GLint param = 0;
   float floatParam = 0.0f;
@@ -94,9 +95,6 @@ ostream& DumpTextureParams( ostream& out, GLenum target )
   dumpparam( GL_TEXTURE_WRAP_T, texture::WRAP );
   dumpparam( GL_TEXTURE_WRAP_R, texture::WRAP );
   dumpparam( GL_TEXTURE_RESIDENT, bool );
-  dumpparam( GL_TEXTURE_COMPARE_MODE, texture::COMPARE_MODE );
-  dumpparam( GL_TEXTURE_COMPARE_FUNC, texture::COMPARE_FUNC );
-  dumpparam( GL_DEPTH_TEXTURE_MODE, texture::DEPTH_STENCIL_MODE );
   dumpparam( GL_GENERATE_MIPMAP, bool );
 
 #undef dumpparam

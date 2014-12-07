@@ -42,6 +42,7 @@ flags = [
 '-x',
 'c++',
 '-I./inc',
+'-I./depends/tetra-soil/src',
 '-I./demo'
 ]
 
