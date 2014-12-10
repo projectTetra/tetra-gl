@@ -2,10 +2,17 @@ import os;
 import os.path;
 
 env = Environment();
-env['CPPPATH'] = ['./inc', './depends/tetra-soil/src'];
-env['LIBPATH'] = ['./bin', './depends/tetra-soil/bin'];
+env['CPPPATH'] = [ './inc'
+                 , './depends/tetra-soil/src'
+                 , './depends/freetype2/include'
+                 ];
 
-env['LIBS'] = [ 'tetraSoil' ];
+env['LIBPATH'] = [ './bin'
+                 , './depends/tetra-soil/bin'
+                 , './depends/freetype2'
+                 ];
+
+env['LIBS'] = [ 'tetraSoil', 'freetype' ];
 env['CXX'] = 'clang++';
 env['CXXFLAGS'] = [ '-std=c++11', '-ggdb' ];
 

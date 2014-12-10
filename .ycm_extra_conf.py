@@ -43,6 +43,7 @@ flags = [
 'c++',
 '-I./inc',
 '-I./depends/tetra-soil/src',
+'-I./depends/freetype2/include',
 '-I./demo'
 ]
 

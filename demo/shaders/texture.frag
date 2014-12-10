@@ -8,5 +8,5 @@ out vec4 vFragColor;
 
 void main()
 {
-  vFragColor = texture( tex, vVaryingTexCoords ); 
+  vFragColor = texture( tex, vVaryingTexCoords );
 }

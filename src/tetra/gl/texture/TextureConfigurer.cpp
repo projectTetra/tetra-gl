@@ -58,3 +58,25 @@ Configurer& Configurer::setWrapR( WRAP wrap )
   return *this;
 }
 
+Configurer& Configurer::setMinFilter( MIN_FILTER filter )
+{
+  glTexParameteri( static_cast<GLenum>( texture.getType() ),
+                   GL_TEXTURE_MIN_FILTER,
+                   static_cast<GLint>( filter ) );
+
+  CheckGLError( "Set Min Filter",
+                {"GL_TEXTURE_MIN_FILTER", to_string( filter )} );
+  return *this;
+}
+
+Configurer& Configurer::setMagFilter( MAG_FILTER filter )
+{
+  glTexParameteri( static_cast<GLenum>( texture.getType() ),
+                   GL_TEXTURE_MAG_FILTER,
+                   static_cast<GLint>( filter ) );
+
+  CheckGLError( "Set Mag Filter",
+                {"GL_TEXTURE_MAG_FILTER", to_string( filter )} );
+  return *this;
+}
+

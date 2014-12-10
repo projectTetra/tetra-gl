@@ -39,6 +39,16 @@ public:
   Configurer& setWrapS( WRAP wrap );
   Configurer& setWrapT( WRAP wrap );
   Configurer& setWrapR( WRAP wrap );
+
+  /**
+   * Set the texture minification filter.
+   **/
+  Configurer& setMinFilter( MIN_FILTER filter );
+
+  /**
+   * set the texture magnification filter.
+   **/
+  Configurer& setMagFilter( MAG_FILTER filter );
 };
 
 /**
