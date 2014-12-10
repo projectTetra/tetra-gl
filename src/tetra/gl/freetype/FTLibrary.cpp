@@ -7,7 +7,7 @@ using namespace tetra::gl::freetype;
 Library::Library()
 {
   auto error = FT_Init_FreeType( &library );
-  if ( error == 0 )
+  if ( error )
   {
     throw FreeTypeException{"FT_Init_FreeType"};
   }

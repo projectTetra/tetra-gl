@@ -2,6 +2,7 @@
 #include <tetra/gl/GLException.hpp>
 #include <tetra/gl/shaderProgram/Builder.hpp>
 #include <tetra/gl/texture/Configurer.hpp>
+#include <tetra/gl/freetype/Face.hpp>
 #include <SOIL.h>
 #include <SfmlApplication.hpp>
 
@@ -37,11 +38,15 @@ public:
  **/
 class GLResources : public IGLResources
 {
+  freetype::Library ftLibrary;
+  freetype::Face ftFace;
 public:
   /**
    * Here we will create all of our OpenGL resources.
    **/
-  GLResources() : projectionProgram{CreatePassthroughProgram()}
+  GLResources()
+    : ftFace{"./demo/assets/Prototype.ttf", ftLibrary}
+    , projectionProgram{CreatePassthroughProgram()}
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
     glEnable( GL_BLEND );
