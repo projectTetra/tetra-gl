@@ -54,16 +54,13 @@ public:
 
     buffer.enableVertexAttrib( 0, &BasicVertex::position );
     buffer.enableVertexAttrib( 1, &BasicVertex::texCoords );
-    buffer.setData( {{-50.0f, -50.0f, 0.0f, 0.0f, 0.0f},
-                     {50.0f, -50.0f, 0.0f, 1.0f, 0.0f},
-                     {-50.0f, 50.0f, 0.0f, 0.0f, 1.0f},
-                     {50.0f, 50.0f, 0.0f, 1.0f, 1.0f}} );
 
     // Get the projection location
     projectionLocation =
       projectionProgram.findUniform( "projection" );
 
     textureLocation = projectionProgram.findUniform( "tex" );
+    textColorLocation = projectionProgram.findUniform( "vTextColor" );
 
     texture::Configurer{basicImage}
       .setWrapS( texture::WRAP::REPEAT )
@@ -72,21 +69,45 @@ public:
       .setMinFilter( texture::MIN_FILTER::LINEAR )
       .setMagFilter( texture::MAG_FILTER::LINEAR );
 
-    unsigned char pixels[512*512];
-
-    for (int i = 0; i < 512*512; ++i)
-    {
-      pixels[i] = 255;
-    }
-
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, 512, 512, 0, GL_RED,
-                  GL_UNSIGNED_BYTE, pixels );
+  }
 
-    CheckGLError( "GLResources Constructor",
-                  {"setting texture parameters"} );
+  void renderString( const string& str )
+  {
+    FT_Set_Pixel_Sizes( ftFace.expose(), 0, 48 );
 
-    texture::DumpTextureParams( cout, GL_TEXTURE_2D );
+    glm::vec2 cursor{ 0.0f, 0.0f };
+
+    for (const char& letter : str )
+    {
+      FT_Load_Char( ftFace.expose(), letter, FT_LOAD_RENDER );
+      FT_GlyphSlot glyph = ftFace.expose()->glyph;
+
+      basicImage.bind();
+      glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, glyph->bitmap.width,
+                    glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
+                    glyph->bitmap.buffer );
+
+      CheckGLError( "Render Letter", {{letter}} );
+
+      float x = (glyph->metrics.horiBearingX >> 6) + cursor.x;
+      float y =
+        ( ( glyph->metrics.horiBearingY - glyph->metrics.height ) >>
+          6 ) +
+        cursor.y;
+
+      float dx = static_cast<float>( glyph->bitmap.width );
+      float dy = static_cast<float>( glyph->bitmap.rows );
+
+      buffer.setData( {{x, y, 0.0f, 0.0f, 1.0f},
+                       {x + dx, y, 0.0f, 1.0f, 1.0f},
+                       {x, y + dy, 0.0f, 0.0f, 0.0f},
+                       {x + dx, y + dy, 0.0f, 1.0f, 0.0f}} );
+      buffer.draw( GL_TRIANGLE_STRIP );
+
+      cursor.x += (glyph->advance.x >> 6);
+      cursor.y += (glyph->advance.y >> 6);
+    }
   }
 
   /**
@@ -103,7 +124,10 @@ public:
 
     basicImage.setUniform( textureLocation );
 
-    buffer.draw( GL_TRIANGLE_STRIP );
+    glm::vec4 vTextColor = glm::vec4{1.0f};
+    glUniform4fv( textColorLocation, 1, &vTextColor[0] );
+
+    renderString( "{[(pTest)]}" );
   }
 
   /**
@@ -131,7 +155,7 @@ private:
       .addShaderFile( "./demo/shaders/projection.vert",
                       shaderProgram::SHADER_TYPE::VERTEX )
 
-      .addShaderFile( "./demo/shaders/texture.frag",
+      .addShaderFile( "./demo/shaders/textRender.frag",
                       shaderProgram::SHADER_TYPE::FRAGMENT )
 
       .bindVertexAttrib( "vVertex", 0 )
@@ -162,6 +186,8 @@ private:
 
   GLint textureLocation{-1};
   texture::Texture basicImage;
+
+  GLint textColorLocation{-1};
 };
 
 /**
