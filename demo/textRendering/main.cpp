@@ -4,6 +4,7 @@
 #include <tetra/gl/texture/Configurer.hpp>
 #include <tetra/gl/freetype/Face.hpp>
 #include <tetra/gl/geometry/Rect.hpp>
+#include <tetra/util/StopWatch.hpp>
 #include <SOIL.h>
 #include <SfmlApplication.hpp>
 
@@ -15,6 +16,7 @@
 using namespace std;
 using namespace tetra;
 using namespace tetra::gl;
+using namespace tetra::util;
 
 /**
  * We will hold Vertex information in this class, note that it has
@@ -42,6 +44,10 @@ class GLResources : public IGLResources
 {
   freetype::Library ftLibrary;
   freetype::Face ftFace;
+  util::Stopwatch<> timer;
+  int framecount = 0;
+  int fps = 30;
+
 public:
   /**
    * Here we will create all of our OpenGL resources.
@@ -72,34 +78,30 @@ public:
       .setMagFilter( texture::MAG_FILTER::LINEAR );
 
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+    timer.tic();
   }
 
-  void renderString( const string& str )
+  void renderString( const string& str, float x, float y )
   {
     FT_Set_Pixel_Sizes( ftFace.expose(), 0, 48 );
 
-    glm::vec2 cursor{ 0.0f, 0.0f };
+    glm::vec2 cursor{ x, y };
 
     for (const char& letter : str )
     {
-      FT_Load_Char( ftFace.expose(), letter, FT_LOAD_RENDER );
-      FT_GlyphSlot glyph = ftFace.expose()->glyph;
+      freetype::Glyph glyph = ftFace.loadGlyph( letter );
 
       basicImage.bind();
-      glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, glyph->bitmap.width,
-                    glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
-                    glyph->bitmap.buffer );
+      glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, glyph.getWidth(),
+                    glyph.getRows(), 0, GL_RED, GL_UNSIGNED_BYTE,
+                    glyph.getBitmap().data() );
 
       CheckGLError( "Render Letter", {{letter}} );
 
-      float x = (glyph->metrics.horiBearingX >> 6) + cursor.x;
-      float y =
-        ( ( glyph->metrics.horiBearingY - glyph->metrics.height ) >>
-          6 ) +
-        cursor.y;
-
-      float dx = static_cast<float>( glyph->bitmap.width );
-      float dy = static_cast<float>( glyph->bitmap.rows );
+      float x = glyph.getXBearing() + cursor.x;
+      float y = glyph.getYBearing() + cursor.y;
+      float dx = glyph.getWidth();
+      float dy = glyph.getRows();
 
       buffer.setData( {{x, y, 0.0f, 0.0f, 1.0f},
                        {x + dx, y, 0.0f, 1.0f, 1.0f},
@@ -107,8 +109,8 @@ public:
                        {x + dx, y + dy, 0.0f, 1.0f, 0.0f}} );
       buffer.draw( GL_TRIANGLE_STRIP );
 
-      cursor.x += (glyph->advance.x >> 6);
-      cursor.y += (glyph->advance.y >> 6);
+      cursor.x += glyph.getXAdvance();
+      cursor.y += glyph.getYAdvance();
     }
   }
 
@@ -146,6 +148,17 @@ public:
    **/
   void render() override
   {
+    if (timer.toc() < 1.0)
+    {
+      ++framecount;
+    }
+    else
+    {
+      timer.tic();
+      fps = framecount;
+      framecount = 0;
+    }
+
     glClear( GL_COLOR_BUFFER_BIT );
     projectionProgram.use();
 
@@ -158,15 +171,19 @@ public:
     glm::vec4 vTextColor = glm::vec4{1.0f};
     glUniform4fv( textColorLocation, 1, &vTextColor[0] );
 
-    auto msg = string{"dvorak"};
-    renderString( msg );
+    auto msg = "Fps: " + to_string(fps);
+    renderString( msg, -100, 500 );
 
-    auto bound = boundingBox( msg );
-    buffer.setData( {{bound.getLeft(), bound.getBottom(), 0.0f},
-                     {bound.getRight(), bound.getBottom(), 0.0f},
-                     {bound.getRight(), bound.getTop(), 0.0f},
-                     {bound.getLeft(), bound.getTop(), 0.0f}} );
-    buffer.draw( GL_LINE_LOOP );
+    static auto msg2 = "nthaoeunthoaun";
+    renderString( msg2, -100, 400 );
+    renderString( msg2, -100, 300 );
+    renderString( msg2, -100, 200 );
+    renderString( msg2, -100, 100 );
+    renderString( msg2, -100, 0 );
+    renderString( msg2, -100, -100 );
+    renderString( msg2, -100, -200 );
+    renderString( msg2, -100, -300 );
+    renderString( msg2, -100, -400 );
   }
 
   /**

@@ -3,6 +3,7 @@
 #define TETRA_GL_FREETYPE_FACE_HPP
 
 #include <tetra/gl/freetype/Library.hpp>
+#include <tetra/gl/freetype/Glyph.hpp>
 #include <string>
 
 namespace tetra
@@ -36,6 +37,11 @@ public:
    **/
   FT_Face& expose() noexcept;
   const FT_Face& expose() const noexcept;
+
+  /**
+   * Loads the glyph from the font.
+   **/
+  Glyph loadGlyph( unsigned int glyph ) const noexcept;
 };
 
 } /* namespace freetype */
