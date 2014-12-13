@@ -3,6 +3,7 @@
 #include <tetra/gl/shaderProgram/Builder.hpp>
 #include <tetra/gl/texture/Configurer.hpp>
 #include <tetra/gl/freetype/Face.hpp>
+#include <tetra/gl/geometry/Rect.hpp>
 #include <SOIL.h>
 #include <SfmlApplication.hpp>
 
@@ -22,7 +23,8 @@ using namespace tetra::gl;
 class BasicVertex
 {
 public:
-  BasicVertex( float x, float y, float z, float u, float v )
+  BasicVertex( float x, float y, float z, float u = 0.0f,
+               float v = 0.0f )
     : position{{x, y, z}}, texCoords{{u, v}}
   { }
 
@@ -110,6 +112,35 @@ public:
     }
   }
 
+  geometry::Rect boundingBox( const string& str )
+  {
+    glm::vec2 cursor{0.0f, 0.0f};
+    geometry::Rect bound{cursor.y, cursor.y, cursor.x, cursor.x};
+    for ( const char& letter : str )
+    {
+      FT_Load_Char( ftFace.expose(), letter, 0 );
+      FT_GlyphSlot glyph = ftFace.expose()->glyph;
+      FT_Glyph_Metrics& metrics = glyph->metrics;
+
+      float bottomOffset =
+        ( metrics.horiBearingY - metrics.height ) >> 6;
+      float topOffset = bottomOffset + ( metrics.height >> 6 );
+      float leftOffset = ( metrics.horiBearingX >> 6 );
+      float rightOffset = leftOffset + ( metrics.width >> 6 );
+
+      geometry::Rect glyphBound{
+        bottomOffset + cursor.y, topOffset + cursor.y,
+        cursor.x + leftOffset, cursor.x + rightOffset};
+
+      bound = geometry::BoundingBox( bound, glyphBound );
+
+      cursor.x += (glyph->advance.x >> 6);
+      cursor.y += (glyph->advance.y >> 6);
+    }
+
+    return bound;
+  }
+
   /**
    * Render the scene.
    **/
@@ -127,7 +158,15 @@ public:
     glm::vec4 vTextColor = glm::vec4{1.0f};
     glUniform4fv( textColorLocation, 1, &vTextColor[0] );
 
-    renderString( "{[(pTest)]}" );
+    auto msg = string{"dvorak"};
+    renderString( msg );
+
+    auto bound = boundingBox( msg );
+    buffer.setData( {{bound.getLeft(), bound.getBottom(), 0.0f},
+                     {bound.getRight(), bound.getBottom(), 0.0f},
+                     {bound.getRight(), bound.getTop(), 0.0f},
+                     {bound.getLeft(), bound.getTop(), 0.0f}} );
+    buffer.draw( GL_LINE_LOOP );
   }
 
   /**
