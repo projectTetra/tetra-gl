@@ -18,7 +18,10 @@ class Rect
 
 public:
   Rect() = default;
+  Rect( const Rect& ) = default;
   Rect( float bottom, float top, float left, float right );
+
+  Rect& operator=( const Rect& ) = default;
 
   /**
    * Tranlates the rectangle by dx and dy.

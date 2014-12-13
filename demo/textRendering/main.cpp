@@ -45,8 +45,6 @@ class GLResources : public IGLResources
   freetype::Library ftLibrary;
   freetype::Face ftFace;
   util::Stopwatch<> timer;
-  int framecount = 0;
-  int fps = 30;
 
 public:
   /**
@@ -148,17 +146,6 @@ public:
    **/
   void render() override
   {
-    if (timer.toc() < 1.0)
-    {
-      ++framecount;
-    }
-    else
-    {
-      timer.tic();
-      fps = framecount;
-      framecount = 0;
-    }
-
     glClear( GL_COLOR_BUFFER_BIT );
     projectionProgram.use();
 
@@ -171,9 +158,7 @@ public:
     glm::vec4 vTextColor = glm::vec4{1.0f};
     glUniform4fv( textColorLocation, 1, &vTextColor[0] );
 
-    auto msg = "Fps: " + to_string(fps);
-    renderString( msg, -100, 500 );
-
+    timer.tic();
     static auto msg2 = "nthaoeunthoaun";
     renderString( msg2, -100, 400 );
     renderString( msg2, -100, 300 );
@@ -184,6 +169,11 @@ public:
     renderString( msg2, -100, -200 );
     renderString( msg2, -100, -300 );
     renderString( msg2, -100, -400 );
+    double time = timer.toc();
+    int msTime = std::ceil( time * 1000 );
+
+    renderString( "Time to render: " + to_string( msTime ) + "ms",
+                  -100, 500 );
   }
 
   /**

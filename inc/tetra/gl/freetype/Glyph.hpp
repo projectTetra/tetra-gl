@@ -19,14 +19,15 @@ namespace freetype
  **/
 class Glyph
 {
-  const geometry::Rect boundingBox;
-  const std::vector<unsigned char> bitmap;
-  const int rows{0}, width{0};
-  const float xBearing{0.0f}, yBearing{0.0f};
-  const float xAdvance{0.0f}, yAdvance{0.0f};
+  geometry::Rect boundingBox{0.0f, 0.0f, 0.0f, 0.0f};
+  std::vector<unsigned char> bitmap{};
+  int rows{0}, width{0};
+  float xBearing{0.0f}, yBearing{0.0f};
+  float xAdvance{0.0f}, yAdvance{0.0f};
 
 public:
   Glyph() = default;
+  Glyph( const Glyph& ) = default;
   Glyph( geometry::Rect bounds, unsigned char* bitmapData, int rows,
          int width, float xBearing, float yBearing, float xAdvance,
          float yAdvance );
