@@ -61,3 +61,9 @@ Glyph Face::loadGlyph( unsigned int glyphId ) noexcept
   return glyph;
 }
 
+void Face::setPixelSize( int size ) noexcept
+{
+  glyphCache.clear();
+  FT_Set_Pixel_Sizes( expose(), 0, size );
+}
+

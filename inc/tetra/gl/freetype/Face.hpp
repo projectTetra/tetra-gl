@@ -44,6 +44,11 @@ public:
    * Loads the glyph from the font.
    **/
   Glyph loadGlyph( unsigned int glyph ) noexcept;
+
+  /**
+   * Resizes the font face, invalidates the cache.
+   **/
+  void setPixelSize( int size ) noexcept;
 };
 
 } /* namespace freetype */

@@ -76,20 +76,19 @@ public:
       .setMagFilter( texture::MAG_FILTER::LINEAR );
 
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-    timer.tic();
+
+    ftFace.setPixelSize( 48 );
   }
 
   void renderString( const string& str, float x, float y )
   {
-    FT_Set_Pixel_Sizes( ftFace.expose(), 0, 48 );
-
     glm::vec2 cursor{ x, y };
+    basicImage.bind();
 
     for (const char& letter : str )
     {
       freetype::Glyph glyph = ftFace.loadGlyph( letter );
 
-      basicImage.bind();
       glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, glyph.getWidth(),
                     glyph.getRows(), 0, GL_RED, GL_UNSIGNED_BYTE,
                     glyph.getBitmap().data() );
@@ -112,30 +111,19 @@ public:
     }
   }
 
-  geometry::Rect boundingBox( const string& str )
+  geometry::Rect paddedBoundingBox( const string& str )
   {
     glm::vec2 cursor{0.0f, 0.0f};
     geometry::Rect bound{cursor.y, cursor.y, cursor.x, cursor.x};
     for ( const char& letter : str )
     {
-      FT_Load_Char( ftFace.expose(), letter, 0 );
-      FT_GlyphSlot glyph = ftFace.expose()->glyph;
-      FT_Glyph_Metrics& metrics = glyph->metrics;
-
-      float bottomOffset =
-        ( metrics.horiBearingY - metrics.height ) >> 6;
-      float topOffset = bottomOffset + ( metrics.height >> 6 );
-      float leftOffset = ( metrics.horiBearingX >> 6 );
-      float rightOffset = leftOffset + ( metrics.width >> 6 );
-
-      geometry::Rect glyphBound{
-        bottomOffset + cursor.y, topOffset + cursor.y,
-        cursor.x + leftOffset, cursor.x + rightOffset};
+      auto glyph = ftFace.loadGlyph( letter );
+      auto glyphBound = glyph.getBoundingBox();
 
       bound = geometry::BoundingBox( bound, glyphBound );
 
-      cursor.x += (glyph->advance.x >> 6);
-      cursor.y += (glyph->advance.y >> 6);
+      cursor.x += glyph.getXAdvance() + 2;
+      cursor.y += glyph.getYAdvance();
     }
 
     return bound;
@@ -159,18 +147,19 @@ public:
     glUniform4fv( textColorLocation, 1, &vTextColor[0] );
 
     timer.tic();
-    static auto msg2 = "nthaoeunthoaun";
+    static auto msg2 = string{ "abcdefghijklmnopqrstuvwxy" };
     renderString( msg2, -100, 400 );
     renderString( msg2, -100, 300 );
     renderString( msg2, -100, 200 );
-    renderString( msg2, -100, 100 );
+    renderString( msg2, -100, 100 ); /*
     renderString( msg2, -100, 0 );
     renderString( msg2, -100, -100 );
     renderString( msg2, -100, -200 );
     renderString( msg2, -100, -300 );
     renderString( msg2, -100, -400 );
+    */
     double time = timer.toc();
-    int msTime = std::ceil( time * 1000 );
+    double msTime = time * 1000;
 
     renderString( "Time to render: " + to_string( msTime ) + "ms",
                   -100, 500 );
