@@ -35,9 +35,6 @@ const FT_Face& Face::expose() const noexcept
 
 Glyph Face::loadGlyph( unsigned int glyphId ) noexcept
 {
-  auto iter = glyphCache.find( glyphId );
-  if ( iter != end( glyphCache ) ) return iter->second;
-
   FT_Load_Char( expose(), glyphId, FT_LOAD_RENDER );
   FT_GlyphSlot& glyphSlot = expose()->glyph;
   FT_Glyph_Metrics& metrics = glyphSlot->metrics;
@@ -53,17 +50,14 @@ Glyph Face::loadGlyph( unsigned int glyphId ) noexcept
   int bitmapRows = static_cast<int>( glyphSlot->bitmap.rows );
   int bitmapWidth = static_cast<int>( glyphSlot->bitmap.width );
 
-  Glyph glyph( bounds, glyphSlot->bitmap.buffer, bitmapRows,
-               bitmapWidth, xBearing, yBearing,
-               glyphSlot->advance.x >> 6, glyphSlot->advance.y >> 6 );
-
-  glyphCache[glyphId] = glyph;
-  return glyph;
+  return Glyph( bounds, glyphSlot->bitmap.buffer, bitmapRows,
+                bitmapWidth, xBearing, yBearing,
+                glyphSlot->advance.x >> 6,
+                glyphSlot->advance.y >> 6 );
 }
 
 void Face::setPixelSize( int size ) noexcept
 {
-  glyphCache.clear();
   FT_Set_Pixel_Sizes( expose(), 0, size );
 }
 

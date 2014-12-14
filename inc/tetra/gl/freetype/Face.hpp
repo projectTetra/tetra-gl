@@ -5,7 +5,6 @@
 #include <tetra/gl/freetype/Library.hpp>
 #include <tetra/gl/freetype/Glyph.hpp>
 #include <string>
-#include <map>
 
 namespace tetra
 {
@@ -20,7 +19,6 @@ namespace freetype
 class Face
 {
   FT_Face face;
-  std::map<unsigned int, Glyph> glyphCache;
 
 public:
   /**
@@ -46,7 +44,7 @@ public:
   Glyph loadGlyph( unsigned int glyph ) noexcept;
 
   /**
-   * Resizes the font face, invalidates the cache.
+   * Resizes the font face.
    **/
   void setPixelSize( int size ) noexcept;
 };

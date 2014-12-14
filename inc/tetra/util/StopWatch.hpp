@@ -23,13 +23,15 @@ public:
 
   void tic() { m_start = std::chrono::high_resolution_clock::now(); }
 
-  double toc()
+  double toc() { return static_cast<double>( count() ) * multiplier; }
+
+  int count()
   {
     using namespace std::chrono;
     auto now = high_resolution_clock::now();
     auto dur = duration_cast<Duration>( now - m_start );
 
-    return static_cast<double>( dur.count() ) * multiplier;
+    return dur.count();
   }
 
 private:

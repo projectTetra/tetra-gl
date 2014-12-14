@@ -3,6 +3,7 @@
 #include <tetra/gl/shaderProgram/Builder.hpp>
 #include <tetra/gl/texture/Configurer.hpp>
 #include <tetra/gl/freetype/Face.hpp>
+#include <tetra/gl/freetype/GlyphCache.hpp>
 #include <tetra/gl/geometry/Rect.hpp>
 #include <tetra/util/StopWatch.hpp>
 #include <SOIL.h>
@@ -44,7 +45,8 @@ class GLResources : public IGLResources
 {
   freetype::Library ftLibrary;
   freetype::Face ftFace;
-  util::Stopwatch<> timer;
+  freetype::GlyphCache glyphCache;
+  util::Stopwatch<std::chrono::microseconds> timer;
 
 public:
   /**
@@ -52,6 +54,7 @@ public:
    **/
   GLResources()
     : ftFace{"./demo/assets/Prototype.ttf", ftLibrary}
+    , glyphCache{ftFace}
     , projectionProgram{CreatePassthroughProgram()}
   {
     glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
@@ -68,65 +71,49 @@ public:
     textureLocation = projectionProgram.findUniform( "tex" );
     textColorLocation = projectionProgram.findUniform( "vTextColor" );
 
-    texture::Configurer{basicImage}
-      .setWrapS( texture::WRAP::REPEAT )
-      .setWrapT( texture::WRAP::REPEAT )
-      .setWrapR( texture::WRAP::REPEAT )
-      .setMinFilter( texture::MIN_FILTER::LINEAR )
-      .setMagFilter( texture::MAG_FILTER::LINEAR );
-
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-
     ftFace.setPixelSize( 48 );
   }
 
   void renderString( const string& str, float x, float y )
   {
-    glm::vec2 cursor{ x, y };
-    basicImage.bind();
+    vector<BasicVertex> verticies;
+    verticies.reserve( str.size() * 2 * 3 );
 
-    for (const char& letter : str )
+    glm::vec2 cursor{x, y};
+    for ( const char& letter : str )
     {
-      freetype::Glyph glyph = ftFace.loadGlyph( letter );
-
-      glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, glyph.getWidth(),
-                    glyph.getRows(), 0, GL_RED, GL_UNSIGNED_BYTE,
-                    glyph.getBitmap().data() );
-
-      CheckGLError( "Render Letter", {{letter}} );
-
+      const auto& glyph = glyphCache.getGlyph( letter );
       float x = glyph.getXBearing() + cursor.x;
       float y = glyph.getYBearing() + cursor.y;
       float dx = glyph.getWidth();
       float dy = glyph.getRows();
 
-      buffer.setData( {{x, y, 0.0f, 0.0f, 1.0f},
-                       {x + dx, y, 0.0f, 1.0f, 1.0f},
-                       {x, y + dy, 0.0f, 0.0f, 0.0f},
-                       {x + dx, y + dy, 0.0f, 1.0f, 0.0f}} );
-      buffer.draw( GL_TRIANGLE_STRIP );
+      auto texCoords = glyphCache.getGlyphTexCoords( letter );
+
+      // first triangle
+      verticies.push_back(
+        {x, y, 0.0f, texCoords.getLeft(), texCoords.getBottom()} );
+      verticies.push_back( {x + dx, y, 0.0f, texCoords.getRight(),
+                            texCoords.getBottom()} );
+      verticies.push_back(
+        {x, y + dy, 0.0f, texCoords.getLeft(), texCoords.getTop()} );
+
+      // second triangle
+      verticies.push_back( {x + dx, y, 0.0f, texCoords.getRight(),
+                            texCoords.getBottom()} );
+      verticies.push_back(
+        {x, y + dy, 0.0f, texCoords.getLeft(), texCoords.getTop()} );
+      verticies.push_back( {x + dx, y + dy, 0.0f,
+                            texCoords.getRight(),
+                            texCoords.getTop()} );
 
       cursor.x += glyph.getXAdvance();
       cursor.y += glyph.getYAdvance();
     }
-  }
 
-  geometry::Rect paddedBoundingBox( const string& str )
-  {
-    glm::vec2 cursor{0.0f, 0.0f};
-    geometry::Rect bound{cursor.y, cursor.y, cursor.x, cursor.x};
-    for ( const char& letter : str )
-    {
-      auto glyph = ftFace.loadGlyph( letter );
-      auto glyphBound = glyph.getBoundingBox();
-
-      bound = geometry::BoundingBox( bound, glyphBound );
-
-      cursor.x += glyph.getXAdvance() + 2;
-      cursor.y += glyph.getYAdvance();
-    }
-
-    return bound;
+    buffer.setData( move( verticies ) );
+    buffer.draw( GL_TRIANGLES );
   }
 
   /**
@@ -141,27 +128,27 @@ public:
     glUniformMatrix4fv( projectionLocation, 1, GL_FALSE,
                         &projectionMatrix[0][0] );
 
-    basicImage.setUniform( textureLocation );
+    glyphCache.setTileMapUniform( textureLocation );
 
     glm::vec4 vTextColor = glm::vec4{1.0f};
     glUniform4fv( textColorLocation, 1, &vTextColor[0] );
 
     timer.tic();
-    static auto msg2 = string{ "abcdefghijklmnopqrstuvwxy" };
+    static auto msg2 = string{"abcdefghijklmnopqrstuvwxy"};
     renderString( msg2, -100, 400 );
     renderString( msg2, -100, 300 );
     renderString( msg2, -100, 200 );
-    renderString( msg2, -100, 100 ); /*
-    renderString( msg2, -100, 0 );
-    renderString( msg2, -100, -100 );
-    renderString( msg2, -100, -200 );
-    renderString( msg2, -100, -300 );
-    renderString( msg2, -100, -400 );
-    */
-    double time = timer.toc();
-    double msTime = time * 1000;
+    renderString( msg2, -100, 100 );
 
-    renderString( "Time to render: " + to_string( msTime ) + "ms",
+    renderString( msg2, -100, -400 );
+    renderString( msg2, -100, -300 );
+    renderString( msg2, -100, -200 );
+    renderString( msg2, -100, -100 );
+
+    int ticCount = timer.count();
+
+    renderString( "Time to render: " + to_string( ticCount ) +
+                    " Microseconds",
                   -100, 500 );
   }
 
@@ -220,7 +207,6 @@ private:
   glm::mat4 projectionMatrix{1.0f};
 
   GLint textureLocation{-1};
-  texture::Texture basicImage;
 
   GLint textColorLocation{-1};
 };
