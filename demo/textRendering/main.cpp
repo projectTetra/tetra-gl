@@ -1,17 +1,6 @@
-#include <tetra/gl/Buffer.hpp>
-#include <tetra/gl/GLException.hpp>
-#include <tetra/gl/shaderProgram/Builder.hpp>
-#include <tetra/gl/texture/Configurer.hpp>
-#include <tetra/gl/geometry/Rect.hpp>
 #include <tetra/gl/freetype/FontRenderer.hpp>
 #include <tetra/util/StopWatch.hpp>
-#include <SOIL.h>
 #include <SfmlApplication.hpp>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <iostream>
 
 using namespace std;
 using namespace tetra;
@@ -60,7 +49,7 @@ public:
     int ticCount = timer.count();
 
     fontRenderer.drawText( "Time to render: " +
-                             to_string( ticCount ) + " ms",
+                             to_string( ticCount ) + " microseconds",
                            -100, 500 );
     fontRenderer.finalize();
   }
