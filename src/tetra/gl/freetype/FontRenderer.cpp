@@ -12,6 +12,29 @@ using namespace tetra::gl::shaderProgram;
 
 namespace
 {
+const char* vertexShaderSource =
+  "#version 130\n"
+  "uniform mat4 projection;"
+  "in vec2 vVertex;"
+  "in vec2 vTexCoords;"
+  "out vec2 vVaryingTexCoords;"
+  "void main() {"
+  "  vVaryingTexCoords = vTexCoords;"
+  "  gl_Position = projection * vec4( "
+  "    vVertex.x, vVertex.y, 0.0f, 1.0f );"
+  "}";
+
+const char* fragShaderSource =
+  "#version 130\n"
+  "uniform sampler2D tex;"
+  "uniform vec4 vTextColor;"
+  "in vec2 vVaryingTexCoords;"
+  "out vec4 vFragColor;"
+  "void main() {"
+  "  vFragColor = vTextColor * vec4( 1.0f, 1.0f, 1.0f, texture( tex, "
+  "    vVaryingTexCoords ).r );"
+  "}";
+
 
 struct BasicVertex
 {
@@ -123,7 +146,7 @@ void FontRenderer::finalize() noexcept
 
 void FontRenderer::onScreenResize( int width, int height ) noexcept
 {
-  float halfWidth = static_cast<float>( width ) / 2.0f;
+  float halfWidth  = static_cast<float>( width ) / 2.0f;
   float halfHeight = static_cast<float>( height ) / 2.0f;
 
   orthoProjection = glm::ortho( -halfWidth, halfWidth, -halfHeight,
@@ -139,12 +162,10 @@ void FontRenderer::setTextColor( float r, float g, float b,
 shaderProgram::Program FontRenderer::createShaderProgram() const
 {
   return shaderProgram::Builder{}
-    .addShaderFile( "./demo/shaders/projection.vert",
-                    SHADER_TYPE::VERTEX )
+    .addShaderSource( vertexShaderSource, SHADER_TYPE::VERTEX   )
+    .addShaderSource( fragShaderSource,   SHADER_TYPE::FRAGMENT )
 
-    .addShaderFile( "./demo/shaders/textRender.frag",
-                    SHADER_TYPE::FRAGMENT )
-    .bindVertexAttrib( "vVertex", 0 )
+    .bindVertexAttrib( "vVertex",    0 )
     .bindVertexAttrib( "vTexCoords", 1 )
     .build();
 }
